@@ -73,8 +73,12 @@ const pressStart2P = Press_Start_2P({
 });
 
 export const metadata: Metadata = {
-  title: "Thebetterfox",
-  description: "Start page for better browsing",
+  title: "Betterfox - Your perfect new tab experience",
+  description:
+    "A minimalistic, customizable start page that makes every new tab feel like home.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({

@@ -20,6 +20,12 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+// Asset Imports
+import logo from "@/app/assets/images/logo.png";
+import highlight from "@/app/assets/images/highlight.png";
+import ssHero from "@/app/assets/images/ss-hero.png";
+import betterfoxsettings from "@/app/assets/images/betterfoxsettings.png";
+
 export default function LandingPage() {
   const [isDark, setIsDark] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -95,7 +101,7 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 backdrop-blur-lg bg-background/80 border-b border-border">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="Logo" width={40} height={40} />
+            <Image src={logo} alt="Logo" width={40} height={40} />
             <span className="text-xl font-bold">Betterfox</span>
           </div>
           <div className="flex items-center gap-4">
@@ -131,7 +137,7 @@ export default function LandingPage() {
                 </span>
 
                 <Image
-                  src="/highlight.png"
+                  src={highlight}
                   alt="Highlight"
                   width={200}
                   height={200}
@@ -173,7 +179,7 @@ export default function LandingPage() {
                 <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                   <div className="text-center space-y-4 w-full h-full">
                     <Image
-                      src="/ss-hero.png"
+                      src={ssHero}
                       alt="Screenshot"
                       width={1920}
                       height={1080}
@@ -215,7 +221,7 @@ export default function LandingPage() {
               </div>
               <div className="aspect-video bg-gradient-to-br from-primary/10 to-secondary/5 rounded-xl flex items-center justify-center">
                 <Image
-                  src="/betterfoxsettings.png"
+                  src={betterfoxsettings}
                   width={1920}
                   height={1080}
                   alt="widgets collage"
@@ -283,7 +289,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors w-full h-full" />
                 <div className="relative z-10 text-center space-y-4 h-full w-full">
                   <video autoPlay controls className="w-full h-full">
-                    <source src="/betterfoxdemo.mov" />
+                    <source src="/assets/videos/betterfoxdemo.mov" />
                   </video>
                   {/* <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
                     <Play className="w-8 h-8 text-primary-foreground ml-1" />
