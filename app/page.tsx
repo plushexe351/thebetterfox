@@ -161,7 +161,7 @@ export default function LandingPage() {
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a
-                href="https://github.com/betterfox/betterfox"
+                href="https://github.com/plushexe351/thebetterfox"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -330,12 +330,9 @@ export default function LandingPage() {
       {/* Footer */}
       <div className="container mx-auto px-6 py-12 border-t border-border">
         <div className="text-center space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Built with Next.js, React, and shadcn/ui
-          </p>
           <div className="flex justify-center gap-6 text-sm">
             <a
-              href="https://github.com/betterfox/betterfox"
+              href="https://github.com/plushexe351/thebetterfox"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
