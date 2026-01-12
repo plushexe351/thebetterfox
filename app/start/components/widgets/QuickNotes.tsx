@@ -103,7 +103,7 @@ export default function QuickNotes() {
       case "card":
       default:
         return {
-          card: "bg-white/5 hover:bg-white/10 border-white/10 transition-all hover:scale-[1.02] active:scale-[0.98] rounded-3xl shadow-lg",
+          card: " border-white/10 transition-all hover:scale-[1.02] active:scale-[0.98] rounded-3xl shadow-lg",
           content: "p-4 flex flex-col justify-between h-full",
           title: "text-white/90 group-hover:text-white",
           text: "text-white/50",
@@ -117,7 +117,7 @@ export default function QuickNotes() {
   return (
     <div className="w-full max-w-[700px] space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-white/60 uppercase tracking-wider">
+        <h3 className="text-sm font-medium text-white uppercase tracking-wider">
           Quick Notes
         </h3>
         <div className="flex gap-2">
@@ -126,7 +126,7 @@ export default function QuickNotes() {
               variant="ghost"
               size="sm"
               onClick={() => setIsAllNotesOpen(true)}
-              className="text-white/40 hover:text-white hover:bg-white/10 text-xs h-7 px-2"
+              className="text-white hover:text-white hover:bg-white/10 text-xs h-7 px-2"
             >
               View All ({notes.length})
             </Button>
@@ -140,7 +140,7 @@ export default function QuickNotes() {
                   resetForm();
                   setIsAddDialogOpen(true);
                 }}
-                className="text-white/40 hover:text-white hover:bg-white/10 h-7 w-7 p-0"
+                className="text-white hover:text-white hover:bg-white/10 h-7 w-7 p-0"
               >
                 <Plus className="h-4 w-4" />
               </Button>
