@@ -86,7 +86,7 @@ export default function QuickNotes() {
     switch (preset) {
       case "minimal":
         return {
-          card: "bg-transparent border-none shadow-none hover:bg-white/5 transition-colors rounded-2xl",
+          card: "bg-secondary/90 backdrop-blur-md border-none shadow-none hover:bg-accent/50 transition-colors rounded-2xl",
           content: "p-4 flex flex-col justify-between h-full",
           meta: "text-white/20",
         };

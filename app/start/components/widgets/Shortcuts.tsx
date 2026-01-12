@@ -204,7 +204,7 @@ const Shortcuts = () => {
     switch (preset) {
       case "minimal":
         return {
-          card: "w-[40px] md:w-[80px] aspect-square p-1 rounded-2xl hover:bg-secondary/50 transition-colors border-0 shadow-none bg-transparent overflow-hidden text-ellipsis whitespace-nowrap",
+          card: "w-[70px] md:w-[80px] h-[70px] md:h-[80px] aspect-square p-1 rounded-2xl hover:bg-secondary/90 backdrop-blur-md transition-colors border-0 shadow-none overflow-hidden text-ellipsis whitespace-nowrap",
           img: "h-8 w-8 rounded-xl",
           text: "mt-1 text-xs text-muted-foreground",
           container: `flex flex-wrap gap-4 w-full max-w-[800px] ${getAlignmentClass()} items-center`,
