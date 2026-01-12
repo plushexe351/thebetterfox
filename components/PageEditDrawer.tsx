@@ -12,10 +12,11 @@ import { Edit } from "lucide-react";
 
 type Props = {};
 
-const SideSheet = (props: Props) => {
+const PageEditDrawer = (props: Props) => {
   return (
+    <div className="fixed">
     <Sheet>
-      <SheetTrigger>
+      <SheetTrigger asChild>
         <Button variant="outline" className="fixed bottom-6 right-6"><Edit/></Button>
       </SheetTrigger>
       <SheetContent>
@@ -28,7 +29,8 @@ const SideSheet = (props: Props) => {
         </SheetHeader>
       </SheetContent>
     </Sheet>
+    </div>
   );
 };
 
-export default SideSheet;
+export default PageEditDrawer;
