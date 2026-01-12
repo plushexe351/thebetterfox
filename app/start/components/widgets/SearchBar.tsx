@@ -5,15 +5,16 @@ import { useEffect, useState } from "react";
 import { notCornyPlaceholders } from "./constants";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
+import { useSettings } from "@/app/start/lib/SettingsContext";
 
-type Props = {};
-
-const SearchBar = (props: Props) => {
+const SearchBar = () => {
+  const { settings } = useSettings();
   const [placeholder, setPlaceholder] = useState("");
   const [showButtonRow, setShowButtonRow] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line
     setPlaceholder(
       notCornyPlaceholders[
         Math.floor(Math.random() * notCornyPlaceholders.length)
@@ -48,7 +49,11 @@ const SearchBar = (props: Props) => {
       const searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(
         query
       )}`;
-      window.location.href = searchUrl;
+      if (settings.search.openInNewTab) {
+        window.open(searchUrl, "_blank");
+      } else {
+        window.location.href = searchUrl;
+      }
     }
   };
 
@@ -63,7 +68,7 @@ const SearchBar = (props: Props) => {
           autoComplete="off"
           placeholder={placeholder}
           onChange={handleInputChange}
-          className="p-5 pr-20 backdrop-blur-md"
+          className="p-5 pr-20 backdrop-blur-md bg-black/40 text-white placeholder:text-white/70 border-white/10 hover:border-white/20 transition-colors focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-white/30"
           value={searchQuery}
         />
         {showButtonRow && (

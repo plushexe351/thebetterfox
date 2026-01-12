@@ -30,7 +30,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        setSettings({ ...DEFAULT_SETTINGS, ...parsed });
+        const mergedSettings = {
+          ...DEFAULT_SETTINGS,
+          ...parsed,
+          widgetVisibility: {
+            ...DEFAULT_SETTINGS.widgetVisibility,
+            ...parsed.widgetVisibility,
+          },
+          notes: parsed.notes || DEFAULT_SETTINGS.notes,
+        };
+        setSettings(mergedSettings);
       }
     } catch (error) {
       console.error("Failed to load settings:", error);

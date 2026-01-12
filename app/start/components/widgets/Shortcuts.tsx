@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useSettings } from "../../lib/SettingsContext"; // Import useSettings
 import { Button } from "@/components/ui/button";
 import { Plus, MoreVertical, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,8 +39,6 @@ interface Shortcut {
   url: string;
 }
 
-type Props = {};
-
 const STORAGE_KEY = "betterfox-shortcuts";
 
 const getFaviconUrl = (url: string): string => {
@@ -61,13 +60,16 @@ const normalizeUrl = (url: string): string => {
   return url;
 };
 
-const Shortcuts = (props: Props) => {
+const Shortcuts = () => {
   const [shortcuts, setShortcuts] = useState<Shortcut[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({ name: "", url: "" });
+  const [isLoaded, setIsLoaded] = useState(false);
+  const { updateSettings, settings } = useSettings();
 
   // Load shortcuts from localStorage on mount
   useEffect(() => {
@@ -75,26 +77,43 @@ const Shortcuts = (props: Props) => {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setShortcuts(Array.isArray(parsed) ? parsed : []);
+        if (Array.isArray(parsed)) {
+          // eslint-disable-next-line
+          setShortcuts(parsed);
+          setIsLoaded(true);
+          return;
+        }
       } catch {
-        setShortcuts([]);
+        // Only set defaults if parsing fails or invalid
       }
-    } else {
-      // Set default GitHub shortcut
+    }
+
+    // Set default GitHub shortcut ONLY if nothing valid was in storage
+    // But now that we support empty array, we should be careful.
+    // If "betterfox-shortcuts" key doesn't exist at all, set default.
+    // If it exists but is "[]", we respect it.
+    if (stored === null) {
       const defaultShortcuts: Shortcut[] = [
-        { id: "github", name: "GitHub", url: "https://github.com" },
+        { id: "google", name: "Google", url: "https://google.com" },
       ];
       setShortcuts(defaultShortcuts);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultShortcuts));
+    } else {
+      // It was empty text or invalid json which resulted in [] or existing empty array
+      // If valid json [] was parsed, we set it above.
+      // If invalid, we probably want defaults? or empty?
+      // Let's assume clear slate if invalid.
+      if (!stored) setShortcuts([]); // Empty string
     }
+    setIsLoaded(true);
   }, []);
 
-  // Save shortcuts to localStorage whenever they change
+  // Save shortcuts to localStorage whenever they change - Only if loaded
   useEffect(() => {
-    if (shortcuts.length > 0) {
+    if (isLoaded) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(shortcuts));
     }
-  }, [shortcuts]);
+  }, [shortcuts, isLoaded]);
 
   const handleOpenDialog = (shortcut?: Shortcut) => {
     if (shortcut) {
@@ -147,48 +166,111 @@ const Shortcuts = (props: Props) => {
 
   const confirmDelete = () => {
     if (deleteId) {
-      setShortcuts(shortcuts.filter((s) => s.id !== deleteId));
+      const newShortcuts = shortcuts.filter((s) => s.id !== deleteId);
+      setShortcuts(newShortcuts);
       setDeleteId(null);
+
+      // Auto-hide if empty
+      if (newShortcuts.length === 0) {
+        // Explicitly save empty array to storage immediately
+        // This prevents the "default shortcuts respawning" issue if the component unmounts before the effect runs
+        localStorage.setItem(STORAGE_KEY, "[]");
+
+        updateSettings({
+          widgetVisibility: {
+            ...settings.widgetVisibility,
+            shortcuts: false,
+          },
+        });
+      }
     }
     setIsDeleteDialogOpen(false);
   };
 
+  const getAlignmentClass = () => {
+    switch (settings.shortcuts.alignment) {
+      case "left":
+        return "justify-start";
+      case "right":
+        return "justify-end";
+      case "center":
+      default:
+        return "justify-center";
+    }
+  };
+
+  const getPresetStyles = () => {
+    const preset = settings.shortcuts.viewPreset;
+    switch (preset) {
+      case "minimal":
+        return {
+          card: "w-[40px] md:w-[80px] aspect-square p-1 rounded-2xl hover:bg-secondary/50 transition-colors border-0 shadow-none bg-transparent overflow-hidden text-ellipsis whitespace-nowrap",
+          img: "h-8 w-8 rounded-xl",
+          text: "mt-1 text-xs text-muted-foreground",
+          container: `flex flex-wrap gap-4 w-full max-w-[800px] ${getAlignmentClass()} items-center`,
+        };
+      case "glass":
+        return {
+          card: "w-[150px] md:w-[160px] h-[100px] md:h-[110px] p-3 rounded-3xl bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 transition-all text-white border",
+          img: "h-10 w-10 rounded-full ring-2 ring-white/20",
+          text: "mt-2 text-sm font-medium",
+          container: `flex flex-wrap gap-4 w-full max-w-[800px] ${getAlignmentClass()} items-center`,
+        };
+      case "card":
+      default:
+        return {
+          card: "w-[150px] md:w-[160px] h-[100px] md:h-[110px] p-3 rounded-3xl hover:opacity-80 transition-all",
+          img: "h-12 w-12 rounded-full",
+          text: "mt-3 text-primary text-sm font-medium",
+          container: `flex flex-wrap gap-4 w-full max-w-[800px] ${getAlignmentClass()} items-center`,
+        };
+    }
+  };
+
+  const styles = getPresetStyles();
+
   return (
     <>
-      <div className="shortcuts-main">
-        <div className="shortcuts-content ">
-          <div className="shortcut-container flex justify-center flex-wrap gap-4">
+      <div className={`shortcuts-main w-full flex  pb-6`}>
+        <div
+          className={`shortcuts-scroll-container max-h-[40vh] overflow-x-hidden w-full p-2 pb-6 flex justify-center`}
+        >
+          <div className={`${styles.container}`}>
             {shortcuts.map((shortcut) => (
               <div key={shortcut.id} className="relative group">
                 <a
                   href={shortcut.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block"
                 >
-                  <Card className="w-[150px] p-3 items-center justify-center rounded-[1.5rem] hover:opacity-80 transition-opacity">
-                    <CardContent className="shortcut-item flex flex-col items-center justify-center">
+                  <Card
+                    className={`h-full flex flex-col items-center justify-center ${styles.card}`}
+                  >
+                    <CardContent className="p-0 flex flex-col items-center justify-center w-full">
                       <Image
                         src={getFaviconUrl(shortcut.url)}
                         alt={shortcut.name}
-                        width={40}
-                        height={40}
-                        className="shortcut-img h-10 w-10 object-cover rounded-[50%]"
+                        width={64}
+                        height={64}
+                        className={`object-contain p-1 ${styles.img}`}
                         unoptimized
                       />
-                      <p className="shortcut-name mt-2 text-primary text-sm">
+                      <p
+                        className={`text-center w-full px-2 overflow-hidden text-ellipsis whitespace-nowrap group-hover:whitespace-normal group-hover:break-words ${styles.text}`}
+                        title={shortcut.name}
+                      >
                         {shortcut.name}
                       </p>
                     </CardContent>
                   </Card>
                 </a>
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         size="icon-xs"
-                        className="h-6 w-6 bg-background/80 backdrop-blur-sm hover:bg-background"
+                        className="h-6 w-6 bg-background/80 backdrop-blur-sm hover:bg-background rounded-full"
                         onClick={(e) => e.preventDefault()}
                       >
                         <MoreVertical className="h-3 w-3" />
@@ -219,15 +301,12 @@ const Shortcuts = (props: Props) => {
                 </div>
               </div>
             ))}
-            <Card className="w-[150px] p-3 items-center justify-center rounded-[1.5rem] bg-secondary cursor-pointer hover:opacity-80 transition-opacity">
-              <CardContent>
-                <Button
-                  className="add-shortcut h-10 w-10 cursor-pointer"
-                  variant="outline"
-                  onClick={() => handleOpenDialog()}
-                >
-                  <Plus />
-                </Button>
+            <Card
+              className={`h-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity bg-secondary/50 border-dashed ${styles.card}`}
+              onClick={() => handleOpenDialog()}
+            >
+              <CardContent className="p-0">
+                <Plus className="h-6 w-6 text-muted-foreground" />
               </CardContent>
             </Card>
           </div>
@@ -256,6 +335,7 @@ const Shortcuts = (props: Props) => {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
+                  maxLength={30}
                   required
                 />
               </div>

@@ -30,9 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import SettingsContent from "./SettingsContent";
 
-type Props = {};
-
-const PageEditDrawer = (props: Props) => {
+const PageEditDrawer = () => {
   const { resetSettings } = useSettings();
   const [isMobile, setIsMobile] = useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
