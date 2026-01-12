@@ -88,26 +88,18 @@ export default function QuickNotes() {
         return {
           card: "bg-transparent border-none shadow-none hover:bg-white/5 transition-colors rounded-2xl",
           content: "p-4 flex flex-col justify-between h-full",
-          title: "text-white/70 group-hover:text-white",
-          text: "text-white/40",
           meta: "text-white/20",
         };
       case "glass":
         return {
           card: "bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 transition-all border rounded-3xl",
           content: "p-4 flex flex-col justify-between h-full",
-          title: "text-white group-hover:text-white",
-          text: "text-white/60",
-          meta: "text-white/40",
         };
       case "card":
       default:
         return {
           card: " border-white/10 transition-all hover:scale-[1.02] active:scale-[0.98] rounded-3xl shadow-lg",
           content: "p-4 flex flex-col justify-between h-full",
-          title: "text-white/90 group-hover:text-white",
-          text: "text-white/50",
-          meta: "text-white/30",
         };
     }
   };
@@ -145,7 +137,7 @@ export default function QuickNotes() {
                 <Plus className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-zinc-900 border-white/10 text-white sm:max-w-[500px]">
+            <DialogContent className="bg-zinc-900 border-white/10 sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>New Note</DialogTitle>
               </DialogHeader>
@@ -196,16 +188,14 @@ export default function QuickNotes() {
                 <div className="space-y-1 overflow-hidden text-ellipsis whitespace-nowrap">
                   <h4
                     className={cn(
-                      "font-medium truncate pr-6 transition-colors",
-                      styles.title
+                      "font-medium truncate pr-6 transition-colors"
                     )}
                   >
                     {note.title}
                   </h4>
                   <p
                     className={cn(
-                      "text-xs leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap",
-                      styles.text
+                      "text-xs leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap"
                     )}
                   >
                     {note.content || "Empty note"}
@@ -213,8 +203,7 @@ export default function QuickNotes() {
                 </div>
                 <div
                   className={cn(
-                    "flex items-center justify-between text-[10px]",
-                    styles.meta
+                    "flex items-center justify-between text-[10px]"
                   )}
                 >
                   <span>{new Date(note.updatedAt).toLocaleDateString()}</span>
