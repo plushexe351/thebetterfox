@@ -63,11 +63,11 @@ const SearchBar = (props: Props) => {
           autoComplete="off"
           placeholder={placeholder}
           onChange={handleInputChange}
-          className="pr-20"
+          className="p-5 pr-20 backdrop-blur-md"
           value={searchQuery}
         />
         {showButtonRow && (
-          <div className="button-row flex gap-1 -ml-19 items-center">
+          <div className="button-row flex gap-1 -ml-20 items-center z-1">
             <Button
               type="button"
               variant="ghost"
@@ -83,6 +83,11 @@ const SearchBar = (props: Props) => {
             >
               <Search className="size-4!" />
             </Button>
+          </div>
+        )}
+        {!showButtonRow && (
+          <div className="button-row flex gap-1 -ml-10 items-center z-1">
+            <Search className="size-4!" />
           </div>
         )}
       </form>

@@ -129,7 +129,7 @@ export default function SettingsContent({
     <div className="space-y-6 px-1 pb-6 overflow-y-auto">
       {/* Background Settings */}
       <div className="space-y-4 pt-5">
-        <h3 className="text-secondary text-base mb-3 font-medium mx-5.5">
+        <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
           Background
         </h3>
         <Card className="space-y-3 rounded-3xl">
@@ -163,17 +163,17 @@ export default function SettingsContent({
                 Video
               </Button>
             </div>
-            <Separator />
+            <Separator className="mb-3" />
 
             {settings.background.type === "solid" && (
-              <div className="space-y-3 mt-3">
+              <div className="space-y-3">
                 <Label>Color</Label>
                 <div className="flex flex-wrap gap-2">
                   {COLOR_PRESETS.map((color) => (
                     <button
                       key={color}
                       type="button"
-                      className={`w-10 h-10 rounded-full border-2 transition-all ${
+                      className={`w-5 h-5 rounded-full border-2 transition-all ${
                         settings.background.solidColor === color
                           ? "border-foreground scale-110"
                           : "border-transparent hover:scale-105"
@@ -185,17 +185,17 @@ export default function SettingsContent({
                   ))}
                 </div>
                 <div className="flex gap-2 items-center">
-                  <Input
+                  <input
                     type="color"
                     value={settings.background.solidColor || "#000000"}
                     onChange={(e) => handleSolidColorChange(e.target.value)}
-                    className="w-20 h-10 p-1"
+                    className="w-10"
                   />
                   <Input
                     type="text"
                     value={settings.background.solidColor || ""}
                     onChange={(e) => handleSolidColorChange(e.target.value)}
-                    placeholder="Enter hex color or leave empty for default"
+                    placeholder="Enter hex color or leave empty"
                     className="flex-1"
                   />
                 </div>
@@ -301,7 +301,7 @@ export default function SettingsContent({
 
       {/* Widget Visibility */}
       <div className="space-y-4">
-        <h3 className="text-secondary text-base mb-3 font-medium mx-5.5">
+        <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
           Widget Visibility
         </h3>
         <Card className="space-y-3 rounded-3xl">
@@ -348,7 +348,7 @@ export default function SettingsContent({
       {/* Clock Settings */}
       {settings.widgetVisibility.clock && (
         <div className="space-y-4">
-          <h3 className="text-secondary text-base mb-3 font-medium mx-5.5">
+          <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
             Clock Settings
           </h3>
           <Card className="space-y-3 rounded-3xl">
@@ -366,7 +366,7 @@ export default function SettingsContent({
                 </div>
                 <Separator />
 
-                <div className="space-y-2">
+                <div className="space-y-2 flex justify-between">
                   <Label>Time Format</Label>
                   <Select
                     value={settings.clock.timeFormat}
@@ -385,7 +385,7 @@ export default function SettingsContent({
                 </div>
                 <Separator />
 
-                <div className="space-y-2">
+                <div className="space-y-2 flex justify-between">
                   <Label>Display Mode</Label>
                   <Select
                     value={settings.clock.displayMode}
@@ -405,7 +405,7 @@ export default function SettingsContent({
                 </div>
                 <Separator />
 
-                <div className="space-y-2">
+                <div className="space-y-2 flex justify-between flex-wrap">
                   <Label>Date Format</Label>
                   <Select
                     value={settings.clock.dateFormat}
@@ -424,7 +424,7 @@ export default function SettingsContent({
                       <SelectItem value="Jan 12, 2024">Jan 12, 2024</SelectItem>
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground min-w-full">
                     Example:{" "}
                     {formatDateExample(settings.clock.dateFormat, new Date())}
                   </p>
@@ -437,7 +437,7 @@ export default function SettingsContent({
 
       {/* Reset Settings */}
       <div className="space-y-4">
-        <h3 className="text-secondary text-base mb-3 font-medium mx-5.5">
+        <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
           Reset
         </h3>
         <Button variant="destructive" onClick={onResetClick} className="w-full">
