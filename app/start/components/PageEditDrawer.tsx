@@ -83,7 +83,7 @@ const PageEditDrawer = () => {
               <AlertDialogTitle>Reset All Settings?</AlertDialogTitle>
               <AlertDialogDescription>
                 This will reset all your settings to their default values. This
-                action cannot be undone.
+                action cannot be undone. Shortcuts will not be deleted.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -121,7 +121,7 @@ const PageEditDrawer = () => {
             <AlertDialogTitle>Reset All Settings?</AlertDialogTitle>
             <AlertDialogDescription>
               This will reset all your settings to their default values. This
-              action cannot be undone.
+              action cannot be undone. Shortcuts will not be deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

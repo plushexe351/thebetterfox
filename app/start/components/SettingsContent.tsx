@@ -199,9 +199,66 @@ export default function SettingsContent({
       : settings.theme.lightColor;
 
   return (
-    <div className="space-y-6 px-1 pb-6 overflow-y-auto">
+    <div className="space-y-6 px-1 pb-6 pt-5 overflow-y-auto">
+      {/* Widget Visibility */}
+      <div className="space-y-4">
+        <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
+          Widgets
+        </h3>
+        <Card className="space-y-3 rounded-3xl">
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="clock-visibility">Clock</Label>
+                <Switch
+                  id="clock-visibility"
+                  checked={settings.widgetVisibility.clock}
+                  onCheckedChange={(checked) =>
+                    handleWidgetVisibilityChange("clock", checked)
+                  }
+                />
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <Label htmlFor="searchbar-visibility">Search Bar</Label>
+                <Switch
+                  id="searchbar-visibility"
+                  checked={settings.widgetVisibility.searchBar}
+                  onCheckedChange={(checked) =>
+                    handleWidgetVisibilityChange("searchBar", checked)
+                  }
+                />
+              </div>
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <Label htmlFor="shortcuts-visibility">Shortcuts</Label>
+                <Switch
+                  id="shortcuts-visibility"
+                  checked={settings.widgetVisibility.shortcuts}
+                  onCheckedChange={(checked) =>
+                    handleWidgetVisibilityChange("shortcuts", checked)
+                  }
+                />
+              </div>
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <Label htmlFor="quick-notes-visibility">Quick Notes</Label>
+                <Switch
+                  id="quick-notes-visibility"
+                  checked={settings.widgetVisibility.quickNotes}
+                  onCheckedChange={(checked) =>
+                    handleWidgetVisibilityChange("quickNotes", checked)
+                  }
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       {/* Theme Settings */}
-      <div className="space-y-4 pt-5">
+      <div className="space-y-4">
         <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
           Theme
         </h3>
@@ -607,64 +664,6 @@ export default function SettingsContent({
         </Card>
       </div>
 
-      {/* Widget Visibility */}
-      <div className="space-y-4">
-        <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
-          Widget Visibility
-        </h3>
-        <Card className="space-y-3 rounded-3xl">
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="clock-visibility">Clock</Label>
-                <Switch
-                  id="clock-visibility"
-                  checked={settings.widgetVisibility.clock}
-                  onCheckedChange={(checked) =>
-                    handleWidgetVisibilityChange("clock", checked)
-                  }
-                />
-              </div>
-              <Separator />
-              <div className="flex items-center justify-between">
-                <Label htmlFor="searchbar-visibility">Search Bar</Label>
-                <Switch
-                  id="searchbar-visibility"
-                  checked={settings.widgetVisibility.searchBar}
-                  onCheckedChange={(checked) =>
-                    handleWidgetVisibilityChange("searchBar", checked)
-                  }
-                />
-              </div>
-              <Separator />
-
-              <div className="flex items-center justify-between">
-                <Label htmlFor="shortcuts-visibility">Shortcuts</Label>
-                <Switch
-                  id="shortcuts-visibility"
-                  checked={settings.widgetVisibility.shortcuts}
-                  onCheckedChange={(checked) =>
-                    handleWidgetVisibilityChange("shortcuts", checked)
-                  }
-                />
-              </div>
-              <Separator />
-
-              <div className="flex items-center justify-between">
-                <Label htmlFor="quick-notes-visibility">Quick Notes</Label>
-                <Switch
-                  id="quick-notes-visibility"
-                  checked={settings.widgetVisibility.quickNotes}
-                  onCheckedChange={(checked) =>
-                    handleWidgetVisibilityChange("quickNotes", checked)
-                  }
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Search Settings */}
       {settings.widgetVisibility.searchBar && (
         <div className="space-y-4">
@@ -700,7 +699,7 @@ export default function SettingsContent({
       )}
 
       {/* Shortcuts Settings */}
-      {settings.widgetVisibility.shortcuts && (
+      {/* {settings.widgetVisibility.shortcuts && (
         <div className="space-y-4">
           <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
             Shortcuts Settings
@@ -728,7 +727,7 @@ export default function SettingsContent({
             </CardContent>
           </Card>
         </div>
-      )}
+      )} */}
 
       {/* Clock Settings */}
       {settings.widgetVisibility.clock && (

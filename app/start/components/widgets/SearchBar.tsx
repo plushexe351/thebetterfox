@@ -25,7 +25,27 @@ const SearchBar = () => {
       ]
     );
   }, []);
+  const fetchSuggestions = async (query: string) => {
+    return new Promise<string[]>((resolve) => {
+      const runtime =
+        typeof (window as any).browser !== "undefined"
+          ? (window as any).browser.runtime
+          : typeof (window as any).chrome !== "undefined"
+          ? (window as any).chrome.runtime
+          : null;
 
+      if (!runtime) {
+        console.warn("Extension runtime not found");
+        resolve([]);
+        return;
+      }
+
+      runtime.sendMessage(
+        { type: "fetchSuggestions", query },
+        (response: any) => resolve(response || [])
+      );
+    });
+  };
   useEffect(() => {
     if (searchQuery.trim().length < 2 || !settings.search.showSuggestions) {
       setSuggestions([]);
@@ -34,14 +54,29 @@ const SearchBar = () => {
 
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(
-          `/api/suggestions?q=${encodeURIComponent(searchQuery)}`
-        );
-        const data = await response.json();
+        const isExtension =
+          typeof window !== "undefined" &&
+          (window.location.protocol === "chrome-extension:" ||
+            window.location.protocol === "moz-extension:" ||
+            window.location.protocol === "file:");
+
+        let data: string[] = [];
+        if (isExtension) {
+          data = await fetchSuggestions(searchQuery);
+        } else {
+          const res = await fetch(
+            `/api/suggestions?q=${encodeURIComponent(searchQuery)}`
+          );
+          if (res.ok) {
+            const json = await res.json();
+            data = json[1] || [];
+          }
+        }
+
         setSuggestions(Array.isArray(data) ? data : []);
         setSelectedIndex(-1);
       } catch (error) {
-        console.error("Error fetching suggestions:", error);
+        console.error("Suggestion fetch failed:", error);
       }
     }, 300);
 

@@ -1,8 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const query = searchParams.get('q');
+  const query = searchParams.get("q");
 
   if (!query) {
     return NextResponse.json([]);
@@ -14,15 +16,10 @@ export async function GET(request: Request) {
         query
       )}`
     );
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch from Google');
-    }
-
     const data = await response.json();
-    return NextResponse.json(data[1] || []);
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Error in suggestions proxy:', error);
-    return NextResponse.json({ error: 'Failed to fetch suggestions' }, { status: 500 });
+    console.error("Error fetching suggestions:", error);
+    return NextResponse.json([]);
   }
 }

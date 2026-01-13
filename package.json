@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "build:extension": "mv app/api ./api-backup && (next build || (mv ./api-backup app/api && exit 1)) && mv ./api-backup app/api && next export",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -25,11 +26,13 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/chrome": "^0.1.33",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "glob": "^13.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
