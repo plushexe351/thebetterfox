@@ -1,0 +1,15 @@
+.thebetterfox-home-hero-section {
+  background-color: var(--background);
+  .perspective-container {
+    perspective: 2000px;
+  }
+
+  .hero-3d-transform {
+    transform: rotateX(20deg) rotateY(-8deg);
+    transition: transform 0.4s ease-out;
+  }
+
+  .hero-3d-transform:hover {
+    transform: rotateX(0) rotateY(0) scale(1.02);
+  }
+}

@@ -1,86 +1,38 @@
 import type { Metadata } from "next";
 import {
-  Geist,
-  Geist_Mono,
-  Inter,
-  Lora,
-  Oswald,
-  Bebas_Neue,
-  Anton,
-  Rubik_Glitch,
-  Bungee_Shade,
-  Faster_One,
-  Monoton,
-  Righteous,
-  Press_Start_2P,
-} from "next/font/google";
-// allow importing global CSS without type declarations
+  anton,
+  bebasNeue,
+  bungeeShade,
+  fasterOne,
+  geistMono,
+  geistSans,
+  inter,
+  lora,
+  monoton,
+  oswald,
+  pressStart2P,
+  righteous,
+  rubikGlitch,
+} from "./fonts";
+// @ts-ignore
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
-const oswald = Oswald({ subsets: ["latin"], variable: "--font-oswald" });
-const bebasNeue = Bebas_Neue({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-bebas-neue",
-});
-const anton = Anton({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-anton",
-});
-const rubikGlitch = Rubik_Glitch({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-rubik-glitch",
-});
-const bungeeShade = Bungee_Shade({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-bungee-shade",
-});
-const fasterOne = Faster_One({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-faster-one",
-});
-const monoton = Monoton({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-monoton",
-});
-const righteous = Righteous({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-righteous",
-});
-const pressStart2P = Press_Start_2P({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-press-start-2p",
-});
-
+/**
+ * The root layout component for the app.
+ * It sets the HTML lang attribute, applies the Inter font, and sets the body class to include all the imported
+ * @param {React.ReactNode} children - The children of the RootLayout component.
+ * @returns {JSX.Element} - The rendered HTML element.
+ */
 export const metadata: Metadata = {
-  title: "Betterfox - Your perfect new tab experience",
+  title: "thebetterfox - Your perfect New Tab Experience",
   description:
     "A minimalistic, customizable start page that makes every new tab feel like home.",
   icons: {
-    icon: "/icon.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{

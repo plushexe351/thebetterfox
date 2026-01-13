@@ -107,7 +107,7 @@ export default function QuickNotes() {
   const styles = getPresetStyles();
 
   return (
-    <div className="w-full max-w-[700px] space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="w-full max-w-[700px] space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-white uppercase tracking-wider">
           Quick Notes
