@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Upload, X, Moon, Sun } from "lucide-react";
+import { RotateCcw, Upload, X, Moon, Sun, Info } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -20,14 +20,16 @@ import {
   TimeFormat,
   ClockDisplayMode,
   DateFormat,
-  COLOR_PRESETS,
   THEME_COLOR_SHADES,
   FONT_OPTIONS,
   ThemeMode,
   ShortcutsViewPreset,
   ShortcutsAlignment,
+  IMAGE_PRESETS,
+  VIDEO_PRESETS,
 } from "../lib/settings";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface SettingsContentProps {
   onResetClick: () => void;
@@ -146,6 +148,18 @@ export default function SettingsContent({
     });
   };
 
+  const handleThemeSettingsChange = (
+    key: keyof typeof settings.theme,
+    value: string
+  ) => {
+    updateSettings({
+      theme: {
+        ...settings.theme,
+        [key]: value as ThemeMode | ShortcutsViewPreset,
+      },
+    });
+  };
+
   const handleShortcutsSettingsChange = (
     key: keyof typeof settings.shortcuts,
     value: string
@@ -153,7 +167,7 @@ export default function SettingsContent({
     updateSettings({
       shortcuts: {
         ...settings.shortcuts,
-        [key]: value as ShortcutsViewPreset | ShortcutsAlignment,
+        [key]: value as ShortcutsAlignment,
       },
     });
   };
@@ -210,6 +224,25 @@ export default function SettingsContent({
                 />
               </div>
               <Separator />
+              <div className="space-y-3 flex justify-between">
+                <Label>View Preset</Label>
+                <Select
+                  value={settings.theme.viewPreset}
+                  onValueChange={(value) =>
+                    handleThemeSettingsChange("viewPreset", value)
+                  }
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="card">Card</SelectItem>
+                    <SelectItem value="minimal">Minimal</SelectItem>
+                    <SelectItem value="glass">Glass</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Separator />
               <Label>Background</Label>
               <div className="flex gap-2 mb-3">
                 <Button
@@ -219,7 +252,7 @@ export default function SettingsContent({
                   size="sm"
                   onClick={() => handleBackgroundTypeChange("solid")}
                 >
-                  Solid (Theme)
+                  Solid
                 </Button>
                 <Button
                   variant={
@@ -240,15 +273,14 @@ export default function SettingsContent({
                   Video
                 </Button>
               </div>
-              <Separator className="mb-3" />
 
               {settings.background.type === "solid" && (
                 <div className="space-y-3">
-                  <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground text-center">
-                    Solid background uses the selected Theme Background Color
-                    above.
-                  </div>
-                  <div className="text-secondary-foreground text-sm mt-2">
+                  {/* <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground text-center">
+                    Solid background preset options change depening on Theme
+                    selected above.
+                  </div> */}
+                  <div className="text-xs text-muted-foreground text-sm mt-2">
                     Select a theme shade below or pick a custom color.
                   </div>
                   <div className="space-y-3">
@@ -273,13 +305,13 @@ export default function SettingsContent({
                     </div>
                   </div>
                   <div className="flex gap-2 items-center mt-3">
-                    <Label className="shrink-0">Custom Color:</Label>
+                    <Label className="shrink-0">Custom Color</Label>
                     <div className="flex gap-2 items-center">
                       <input
                         type="color"
                         value={settings.background.solidColor || "#000000"}
                         onChange={(e) => handleSolidColorChange(e.target.value)}
-                        className="w-10 h-10 p-0 border-0 rounded overflow-hidden cursor-pointer"
+                        className="w-6 h-6 p-0 border-0 rounded overflow-hidden cursor-pointer"
                       />
                       <Button
                         variant="outline"
@@ -295,7 +327,9 @@ export default function SettingsContent({
 
               {settings.background.type === "image" && (
                 <div className="space-y-3">
-                  <Label>Image</Label>
+                  <Label className="text-s text-muted-foreground font-semibold">
+                    Custom
+                  </Label>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -312,6 +346,50 @@ export default function SettingsContent({
                     <Upload className="mr-2 h-4 w-4" />
                     Upload Image
                   </Button>
+                  <div className="space-y-2">
+                    <Label className="text-s text-muted-foreground font-semibold">
+                      Presets
+                    </Label>
+                    {IMAGE_PRESETS.length === 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        No presets available.
+                      </p>
+                    )}
+                    <div className="grid grid-cols-2 gap-2">
+                      {IMAGE_PRESETS.map((preset) => (
+                        <Button
+                          key={preset.url}
+                          variant="outline"
+                          size="sm"
+                          className={cn(
+                            "h-16 relative overflow-hidden group border-white/5",
+                            settings.background.imageUrl === preset.url &&
+                              "ring-2 ring-primary"
+                          )}
+                          onClick={() =>
+                            updateSettings({
+                              background: {
+                                ...settings.background,
+                                type: "image",
+                                imageUrl: preset.url,
+                              },
+                            })
+                          }
+                        >
+                          <img
+                            src={preset.url}
+                            alt={preset.name}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <span className="text-[10px] font-medium text-white shadow-sm">
+                              {preset.name}
+                            </span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                   {settings.background.imageUrl && (
                     <div className="relative">
                       <img
@@ -341,7 +419,9 @@ export default function SettingsContent({
 
               {settings.background.type === "video" && (
                 <div className="space-y-3">
-                  <Label>Video</Label>
+                  <Label className="text-s text-muted-foreground font-semibold">
+                    Custom
+                  </Label>
                   <input
                     ref={videoInputRef}
                     type="file"
@@ -358,6 +438,58 @@ export default function SettingsContent({
                     <Upload className="mr-2 h-4 w-4" />
                     Upload Video
                   </Button>
+                  <div className="space-y-2">
+                    <Label className="text-s text-muted-foreground font-semibold">
+                      Presets
+                    </Label>
+                    {VIDEO_PRESETS.length === 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        No presets available.
+                      </p>
+                    )}
+                    {VIDEO_PRESETS.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2">
+                        {VIDEO_PRESETS.map((preset) => (
+                          <Button
+                            key={preset.url}
+                            variant="outline"
+                            size="sm"
+                            className={cn(
+                              "h-16 relative overflow-hidden group border-white/5",
+                              settings.background.videoUrl === preset.url &&
+                                "ring-2 ring-primary"
+                            )}
+                            onClick={() =>
+                              updateSettings({
+                                background: {
+                                  ...settings.background,
+                                  type: "video",
+                                  videoUrl: preset.url,
+                                },
+                              })
+                            }
+                          >
+                            <video
+                              src={preset.url}
+                              className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-110"
+                              muted
+                              loop
+                              onMouseEnter={(e) => e.currentTarget.play()}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.pause();
+                                e.currentTarget.currentTime = 0;
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                              <span className="text-[10px] font-medium text-white shadow-sm">
+                                {preset.name}
+                              </span>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   {settings.background.videoUrl && (
                     <div className="relative">
                       <video
@@ -386,8 +518,6 @@ export default function SettingsContent({
                   )}
                 </div>
               )}
-
-              {/* <Separator className="my-3" /> */}
 
               {/* Brightness & Blur Sliders - Only show for image/video */}
               {(settings.background.type === "image" ||
@@ -450,6 +580,9 @@ export default function SettingsContent({
                         {settings.background.position}%
                       </span>
                     </div>
+                    <p className="flex gap-1 items-center text-xs text-muted-foreground">
+                      <Info size={15} /> Mobile only
+                    </p>
                     <input
                       type="range"
                       min="0"
@@ -539,7 +672,7 @@ export default function SettingsContent({
             Search Settings
           </h3>
           <Card className="space-y-3 rounded-3xl">
-            <CardContent>
+            <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label htmlFor="open-new-tab">Always Open in New Tab</Label>
                 <Switch
@@ -547,6 +680,17 @@ export default function SettingsContent({
                   checked={settings.search.openInNewTab}
                   onCheckedChange={(checked) =>
                     handleSearchSettingsChange("openInNewTab", checked)
+                  }
+                />
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <Label htmlFor="show-suggestions">Show Suggestions</Label>
+                <Switch
+                  id="show-suggestions"
+                  checked={settings.search.showSuggestions}
+                  onCheckedChange={(checked) =>
+                    handleSearchSettingsChange("showSuggestions", checked)
                   }
                 />
               </div>
@@ -563,26 +707,6 @@ export default function SettingsContent({
           </h3>
           <Card className="space-y-3 rounded-3xl">
             <CardContent>
-              <div className="space-y-3 flex justify-between">
-                <Label>View Preset</Label>
-                <Select
-                  value={settings.shortcuts.viewPreset}
-                  onValueChange={(value) =>
-                    handleShortcutsSettingsChange("viewPreset", value)
-                  }
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="card">Card</SelectItem>
-                    <SelectItem value="minimal">Minimal</SelectItem>
-                    <SelectItem value="glass">Glass</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Separator className="my-3" />
-
               <div className="space-y-3 flex justify-between">
                 <Label>Alignment</Label>
                 <Select
@@ -615,6 +739,26 @@ export default function SettingsContent({
           <Card className="space-y-3 rounded-3xl">
             <CardContent>
               <div className="space-y-4">
+                <div className="space-y-2 flex justify-between">
+                  <Label>Show</Label>
+                  <Select
+                    value={settings.clock.displayMode}
+                    onValueChange={(value: ClockDisplayMode) =>
+                      handleClockSettingsChange("displayMode", value)
+                    }
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="time-only">Time Only</SelectItem>
+                      <SelectItem value="date-only">Date Only</SelectItem>
+                      <SelectItem value="both">Both Time & Date</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Separator />
+
                 <div className="flex items-center justify-between">
                   <Label htmlFor="show-seconds">Show Seconds</Label>
                   <Switch
@@ -646,26 +790,6 @@ export default function SettingsContent({
                 </div>
                 <Separator />
 
-                <div className="space-y-2 flex justify-between">
-                  <Label>Display Mode</Label>
-                  <Select
-                    value={settings.clock.displayMode}
-                    onValueChange={(value: ClockDisplayMode) =>
-                      handleClockSettingsChange("displayMode", value)
-                    }
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="time-only">Time Only</SelectItem>
-                      <SelectItem value="date-only">Date Only</SelectItem>
-                      <SelectItem value="both">Both</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Separator />
-
                 <div className="space-y-3">
                   <Label>Text Color</Label>
                   <div className="flex gap-2 items-center">
@@ -675,7 +799,7 @@ export default function SettingsContent({
                       onChange={(e) =>
                         handleClockSettingsChange("textColor", e.target.value)
                       }
-                      className="w-10 h-10 p-0 border-0 rounded overflow-hidden cursor-pointer"
+                      className="w-6 h-6 p-0 border-0 rounded overflow-hidden cursor-pointer"
                     />
                     <Button
                       variant="outline"
@@ -704,8 +828,6 @@ export default function SettingsContent({
                     <SelectContent>
                       <SelectItem value="Mon Jan 12">Mon Jan 12</SelectItem>
                       <SelectItem value="01/12/2024">01/12/2024</SelectItem>
-                      <SelectItem value="12/01/2024">12/01/2024</SelectItem>
-                      <SelectItem value="2024-01-12">2024-01-12</SelectItem>
                       <SelectItem value="Jan 12, 2024">Jan 12, 2024</SelectItem>
                     </SelectContent>
                   </Select>
@@ -715,7 +837,27 @@ export default function SettingsContent({
                   </p>
                 </div>
                 <Separator />
-
+                <div className="space-y-2 flex justify-between gap-2 items-center">
+                  <Label>Date Font</Label>
+                  <Select
+                    value={settings.clock.dateFontFamily}
+                    onValueChange={(value) =>
+                      handleClockSettingsChange("dateFontFamily", value)
+                    }
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FONT_OPTIONS.map((font) => (
+                        <SelectItem key={font.value} value={font.value}>
+                          {font.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Separator />
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <Label>Date Font Size</Label>
@@ -739,10 +881,30 @@ export default function SettingsContent({
                   />
                 </div>
                 <Separator />
-
+                <div className="space-y-2 flex justify-between gap-2 items-center">
+                  <Label>Time Font</Label>
+                  <Select
+                    value={settings.clock.fontFamily}
+                    onValueChange={(value) =>
+                      handleClockSettingsChange("fontFamily", value)
+                    }
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FONT_OPTIONS.map((font) => (
+                        <SelectItem key={font.value} value={font.value}>
+                          {font.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Separator />
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <Label>Font Size</Label>
+                    <Label>Time Font Size</Label>
                     <span className="text-sm text-muted-foreground">
                       {settings.clock.fontSize}px
                     </span>
@@ -785,49 +947,6 @@ export default function SettingsContent({
                     }
                     className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
                   />
-                </div>
-                <Separator />
-
-                <div className="space-y-2 flex justify-between gap-2 items-center">
-                  <Label>Time Font Family</Label>
-                  <Select
-                    value={settings.clock.fontFamily}
-                    onValueChange={(value) =>
-                      handleClockSettingsChange("fontFamily", value)
-                    }
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {FONT_OPTIONS.map((font) => (
-                        <SelectItem key={font.value} value={font.value}>
-                          {font.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Separator />
-                <div className="space-y-2 flex justify-between gap-2 items-center">
-                  <Label>Date Font Family</Label>
-                  <Select
-                    value={settings.clock.dateFontFamily}
-                    onValueChange={(value) =>
-                      handleClockSettingsChange("dateFontFamily", value)
-                    }
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {FONT_OPTIONS.map((font) => (
-                        <SelectItem key={font.value} value={font.value}>
-                          {font.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
             </CardContent>

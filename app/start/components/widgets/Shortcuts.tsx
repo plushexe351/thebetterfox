@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { useSettings } from "../../lib/SettingsContext"; // Import useSettings
+import { useSettings } from "../../lib/SettingsContext";
 import { Button } from "@/components/ui/button";
 import { Plus, MoreVertical, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -88,10 +88,8 @@ const Shortcuts = () => {
       }
     }
 
-    // Set default GitHub shortcut ONLY if nothing valid was in storage
-    // But now that we support empty array, we should be careful.
+    // Set default Google shortcut ONLY if nothing valid was in storage
     // If "betterfox-shortcuts" key doesn't exist at all, set default.
-    // If it exists but is "[]", we respect it.
     if (stored === null) {
       const defaultShortcuts: Shortcut[] = [
         { id: "google", name: "Google", url: "https://google.com" },
@@ -99,10 +97,6 @@ const Shortcuts = () => {
       setShortcuts(defaultShortcuts);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultShortcuts));
     } else {
-      // It was empty text or invalid json which resulted in [] or existing empty array
-      // If valid json [] was parsed, we set it above.
-      // If invalid, we probably want defaults? or empty?
-      // Let's assume clear slate if invalid.
       if (!stored) setShortcuts([]); // Empty string
     }
     setIsLoaded(true);
@@ -200,7 +194,7 @@ const Shortcuts = () => {
   };
 
   const getPresetStyles = () => {
-    const preset = settings.shortcuts.viewPreset;
+    const preset = settings.theme.viewPreset;
     switch (preset) {
       case "minimal":
         return {
@@ -233,7 +227,7 @@ const Shortcuts = () => {
     <>
       <div className={`shortcuts-main w-full flex  pb-6`}>
         <div
-          className={`shortcuts-scroll-container max-h-[40vh] overflow-x-hidden w-full p-2 pb-6 flex justify-center`}
+          className={`shortcuts-scroll-container max-h-[40vh] overflow-x-hidden w-full p-2 flex justify-center`}
         >
           <div className={`${styles.container}`}>
             {shortcuts.map((shortcut) => (

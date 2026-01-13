@@ -3,8 +3,7 @@ import StartContent from "./components/StartContent";
 
 export const metadata = {
   title: "New tab",
-  description:
-    "A minimalistic, customizable start page that makes every new tab feel like home.",
+  description: "Start page | Thebetterfox - Your perfect New Tab Experience",
   icons: {
     icon: "/favicon.png",
   },

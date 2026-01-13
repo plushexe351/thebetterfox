@@ -82,7 +82,7 @@ export default function QuickNotes() {
   };
 
   const getPresetStyles = () => {
-    const preset = settings.shortcuts.viewPreset;
+    const preset = settings.theme.viewPreset;
     switch (preset) {
       case "minimal":
         return {
@@ -221,7 +221,7 @@ export default function QuickNotes() {
           <div
             className={cn(
               "col-span-full py-8 text-center border border-dashed border-white/10",
-              settings.shortcuts.viewPreset === "minimal"
+              settings.theme.viewPreset === "minimal"
                 ? "bg-transparent rounded-2xl"
                 : "bg-white/5 rounded-3xl"
             )}

@@ -71,7 +71,6 @@ export type ShortcutsViewPreset = "card" | "minimal" | "glass";
 export type ShortcutsAlignment = "left" | "center" | "right";
 
 export interface ShortcutsSettings {
-  viewPreset: ShortcutsViewPreset;
   alignment: ShortcutsAlignment;
 }
 
@@ -84,6 +83,7 @@ export interface WidgetVisibility {
 
 export interface SearchSettings {
   openInNewTab: boolean;
+  showSuggestions: boolean;
 }
 
 export interface BackgroundSettings {
@@ -100,6 +100,7 @@ export interface ThemeSettings {
   mode: ThemeMode;
   darkColor: string;
   lightColor: string;
+  viewPreset: ShortcutsViewPreset;
 }
 
 export interface Settings {
@@ -140,18 +141,23 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   search: {
     openInNewTab: false,
+    showSuggestions: true,
   },
   shortcuts: {
-    viewPreset: "card",
     alignment: "center",
   },
   theme: {
     mode: "dark",
     darkColor: THEME_COLOR_SHADES.dark[0],
     lightColor: THEME_COLOR_SHADES.light[0],
+    viewPreset: "card",
   },
   notes: [],
 };
+
+type ImagePreset = {url: string; name: string};
+
+type VideoPreset = { url: string; name: string };
 
 export const STORAGE_KEY = "betterfox-settings";
 
@@ -166,4 +172,38 @@ export const COLOR_PRESETS = [
   "#1c1917", // stone-900
   "#09090b", // zinc-950
   "#0a0a0a", // neutral-950
+];
+
+export const IMAGE_PRESETS: ImagePreset[] = [
+  {
+    name: "Negative Space",
+    url: "/assets/wallpapers/negativespace.jpg",
+  },
+  {
+    name: "Space",
+    url: "/assets/wallpapers/space.jpg",
+  },
+  {
+    name: "Cat",
+    url: "/assets/wallpapers/cat.jpg",
+  },
+   {
+    name: "Another Cat",
+    url: "/assets/wallpapers/anothercat.jpg",
+  },
+   {
+    name: "Duck",
+    url: "/assets/wallpapers/duck.jpg",
+  },
+   {
+    name: "Starfish",
+    url: "/assets/wallpapers/starfish.jpg",
+  },
+   {
+    name: "Horse",
+    url: "/assets/wallpapers/horse.jpg",
+  },
+];
+
+export const VIDEO_PRESETS: VideoPreset[] = [
 ];
