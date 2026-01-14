@@ -14,7 +14,7 @@ Whether thebetterfox continues as an actively maintained project depends on inte
 
 # How to create extension?
 
-"build:extension": "next build && next export && node fix-inline-script.js && mkdir -p extension/\_next && cp -r out/start/_ extension/ && mv extension/index.html extension/start.html && cp -r out/\_next/_ extension/\_next/ && cp out/favicon.ico extension/ && cp -r public/assets extension/assets"
+"build:extension": "next build && next export && node fix-inline-script.js && mkdir -p extension/\next && cp -r out/start/_ extension/ && mv extension/index.html extension/start.html && cp -r out/\next/_ extension/\next/ && cp out/favicon.ico extension/ && cp -r public/assets extension/assets"
 
 Run
 
@@ -35,4 +35,11 @@ cp -r out/start/* extension/
 cp -r out/_next extension/_next
 cp out/favicon.ico extension/
 cp -r public/assets extension/assets
+```
+
+finally, run:
+
+```
+find extension -depth -name '*_next*' -exec bash -c 'mv "$1" "${1//_next/next}"' _ {} \;
+grep -rl "_next" extension | xargs sed -i '' 's/_next/next/g'
 ```

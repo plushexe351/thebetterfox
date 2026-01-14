@@ -88,12 +88,9 @@ export default function StartContent() {
   return (
     <>
       <PageEditDrawer />
-      <div className="new-page-main-content h-full w-full flex flex-col items-center justify-center gap-4 relative overflow-auto">
+      <div className="new-page-main-content h-screen w-full flex flex-col items-center justify-center gap-4 relative">
         {/* Background Layer */}
-        <div
-          ref={backgroundRef}
-          className="absolute inset-0 w-full h-full z-0 "
-        />
+        <div ref={backgroundRef} className="absolute w-full h-full z-0 " />
         {/* Video background */}
         {settings.background.type === "video" &&
           settings.background.videoUrl && (
@@ -113,7 +110,7 @@ export default function StartContent() {
           )}
 
         {/* Content overlay */}
-        <div className="new-page-main-content-container container min-h-screen h-full flex flex-col items-center justify-start gap-20 p-3 pt-30 relative z-10">
+        <div className="new-page-main-content-container w-full min-h-screen h-full flex flex-col items-center justify-start gap-20 p-3 pt-30 relative z-10 overflow-auto">
           {settings.widgetVisibility.clock && <Clock />}
           {settings.widgetVisibility.quickNotes && <QuickNotes />}
           {settings.widgetVisibility.searchBar && <SearchBar />}
