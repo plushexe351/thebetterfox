@@ -274,7 +274,7 @@ export default function QuickNotes() {
           <DialogFooter className="border-t border-border pt-4 gap-2">
             <Button
               variant="ghost"
-              className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
+              className="text-destructive hover:bg-red-400/10"
               onClick={() => editingNote && handleDeleteNote(editingNote.id)}
             >
               Delete
@@ -290,7 +290,7 @@ export default function QuickNotes() {
 
       {/* View All Notes Dialog */}
       <Dialog open={isAllNotesOpen} onOpenChange={setIsAllNotesOpen}>
-        <DialogContent className="bg-background border-border text-foreground sm:max-w-[800px] h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
+        <DialogContent className="bg-background border-border text-foreground w-[600px] sm:max-w-[800px] h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
           <DialogHeader className="p-6 pb-2">
             <div className="flex items-center justify-between gap-4">
               <DialogTitle className="text-xl font-semibold">
