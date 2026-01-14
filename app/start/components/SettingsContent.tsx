@@ -2,7 +2,19 @@
 
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Upload, X, Moon, Sun, Info } from "lucide-react";
+import {
+  RotateCcw,
+  Upload,
+  X,
+  Moon,
+  Sun,
+  Info,
+  Trash2,
+  RefreshCw,
+  NotebookPen,
+  Link,
+  ChevronRight,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -38,7 +50,12 @@ interface SettingsContentProps {
 export default function SettingsContent({
   onResetClick,
 }: SettingsContentProps) {
-  const { settings, updateSettings } = useSettings();
+  const {
+    settings,
+    updateSettings,
+    setOpenQuickNotesManager,
+    setOpenShortcutsManager,
+  } = useSettings();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -199,15 +216,31 @@ export default function SettingsContent({
       : settings.theme.lightColor;
 
   return (
-    <div className="space-y-6 px-1 pb-6 pt-5 overflow-y-auto">
+    <div className="space-y-6 pb-6 px-1 pt-5 overflow-y-auto">
       {/* Widget Visibility */}
       <div className="space-y-4">
-        <h3 className="text-primary text-base mb-3 font-medium mx-5.5">
-          Widgets
-        </h3>
+        <div className="mx-5.5 mb-3">
+          <h3 className="text-primary text-base font-medium">Widgets</h3>
+        </div>
         <Card className="space-y-3 rounded-3xl">
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center justify-between flex-wrap space-y-4">
+                <div className="space-y-0.5">
+                  <Label htmlFor="show-titles">Widget Titles</Label>
+                </div>
+                <Switch
+                  id="show-titles"
+                  checked={settings.widgetVisibility.showTitles}
+                  onCheckedChange={(checked) =>
+                    handleWidgetVisibilityChange("showTitles", checked)
+                  }
+                />
+                <p className="text-xs text-muted-foreground min-w-full">
+                  Not all widgets support titles
+                </p>
+              </div>
+              <Separator />
               <div className="flex items-center justify-between">
                 <Label htmlFor="clock-visibility">Clock</Label>
                 <Switch
@@ -231,27 +264,59 @@ export default function SettingsContent({
               </div>
               <Separator />
 
-              <div className="flex items-center justify-between">
-                <Label htmlFor="shortcuts-visibility">Shortcuts</Label>
-                <Switch
-                  id="shortcuts-visibility"
-                  checked={settings.widgetVisibility.shortcuts}
-                  onCheckedChange={(checked) =>
-                    handleWidgetVisibilityChange("shortcuts", checked)
-                  }
-                />
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="shortcuts-visibility">Shortcuts</Label>
+                  <Switch
+                    id="shortcuts-visibility"
+                    checked={settings.widgetVisibility.shortcuts}
+                    onCheckedChange={(checked) =>
+                      handleWidgetVisibilityChange("shortcuts", checked)
+                    }
+                  />
+                </div>
+                {settings.widgetVisibility.shortcuts && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full h-9 rounded-xl border-white/5 bg-white/5 hover:bg-white/10 text-xs font-medium justify-between group"
+                    onClick={() => setOpenShortcutsManager(true)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Link className="h-3.5 w-3.5 text-orange-500" />
+                      Manage Shortcuts
+                    </div>
+                    <ChevronRight className="h-3.5 w-3.5 text-white/20 group-hover:text-white/40 transition-colors" />
+                  </Button>
+                )}
               </div>
               <Separator />
 
-              <div className="flex items-center justify-between">
-                <Label htmlFor="quick-notes-visibility">Quick Notes</Label>
-                <Switch
-                  id="quick-notes-visibility"
-                  checked={settings.widgetVisibility.quickNotes}
-                  onCheckedChange={(checked) =>
-                    handleWidgetVisibilityChange("quickNotes", checked)
-                  }
-                />
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="quick-notes-visibility">Quick Notes</Label>
+                  <Switch
+                    id="quick-notes-visibility"
+                    checked={settings.widgetVisibility.quickNotes}
+                    onCheckedChange={(checked) =>
+                      handleWidgetVisibilityChange("quickNotes", checked)
+                    }
+                  />
+                </div>
+                {settings.widgetVisibility.quickNotes && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full h-9 rounded-xl border-white/5 bg-white/5 hover:bg-white/10 text-xs font-medium justify-between group"
+                    onClick={() => setOpenQuickNotesManager(true)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <NotebookPen className="h-3.5 w-3.5 text-primary" />
+                      Manage Quickies
+                    </div>
+                    <ChevronRight className="h-3.5 w-3.5 text-white/20 group-hover:text-white/40 transition-colors" />
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>
@@ -361,7 +426,7 @@ export default function SettingsContent({
                       ))}
                     </div>
                   </div>
-                  <div className="flex gap-2 items-center mt-3">
+                  <div className="flex gap-2 justify-between flex-wrap items-center mt-3">
                     <Label className="shrink-0">Custom Color</Label>
                     <div className="flex gap-2 items-center">
                       <input
@@ -375,7 +440,7 @@ export default function SettingsContent({
                         size="sm"
                         onClick={() => handleSolidColorChange("")}
                       >
-                        Clear / Use Theme
+                        Reset
                       </Button>
                     </div>
                   </div>
@@ -671,7 +736,7 @@ export default function SettingsContent({
             Search Settings
           </h3>
           <Card className="space-y-3 rounded-3xl">
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="open-new-tab">Always Open in New Tab</Label>
                 <Switch
@@ -789,7 +854,7 @@ export default function SettingsContent({
                 </div>
                 <Separator />
 
-                <div className="space-y-3">
+                <div className="space-y-3 flex justify-between flex-wrap items-center">
                   <Label>Text Color</Label>
                   <div className="flex gap-2 items-center">
                     <input

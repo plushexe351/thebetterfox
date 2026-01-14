@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plus, Trash2, Edit2, Maximize2, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Trash2, Edit2, Maximize2, X, Search } from "lucide-react";
 import { useSettings } from "../../lib/SettingsContext";
 import { Note } from "../../lib/settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,22 +13,35 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { DialogDescription } from "@base-ui/react";
 
 export default function QuickNotes() {
-  const { settings, updateSettings } = useSettings();
+  const {
+    settings,
+    updateSettings,
+    openQuickNotesManager,
+    setOpenQuickNotesManager,
+  } = useSettings();
   const [isAllNotesOpen, setIsAllNotesOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const notes = settings.notes || [];
   const displayNotes = notes.slice(0, 2);
+
+  useEffect(() => {
+    if (openQuickNotesManager) {
+      setIsAllNotesOpen(true);
+      setOpenQuickNotesManager(false);
+    }
+  }, [openQuickNotesManager, setOpenQuickNotesManager]);
 
   const handleAddNote = () => {
     const newNote: Note = {
@@ -108,79 +121,81 @@ export default function QuickNotes() {
 
   return (
     <div className="w-full max-w-[700px] space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-white uppercase tracking-wider">
-          Quick Notes
-        </h3>
-        <div className="flex gap-2">
-          {notes.length > 2 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsAllNotesOpen(true)}
-              className="text-white hover:text-white hover:bg-white/10 text-xs h-7 px-2"
-            >
-              View All ({notes.length})
-            </Button>
-          )}
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
+      {settings.widgetVisibility.showTitles && (
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-primary uppercase tracking-wider">
+            Quickies
+          </h3>
+          <div className="flex gap-2">
+            {notes.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  resetForm();
-                  setIsAddDialogOpen(true);
-                }}
-                className="text-white hover:text-white hover:bg-white/10 h-7 w-7 p-0"
+                onClick={() => setIsAllNotesOpen(true)}
+                className="text-primary hover:bg-primary/10 text-xs h-7 px-2"
               >
-                <Plus className="h-4 w-4" />
+                Manage Quickies ({notes.length})
               </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-zinc-900 border-white/10 sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>New Note</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Title"
-                    value={noteTitle}
-                    onChange={(e) => setNoteTitle(e.target.value)}
-                    className="bg-white/5 border-white/10 focus:border-white/20 transition-colors"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Textarea
-                    placeholder="Start typing..."
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                    className="min-h-[150px] bg-white/5 border-white/10 focus:border-white/20 transition-colors"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
+            )}
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
                 <Button
                   variant="ghost"
-                  onClick={() => setIsAddDialogOpen(false)}
+                  size="sm"
+                  onClick={() => {
+                    resetForm();
+                    setIsAddDialogOpen(true);
+                  }}
+                  className="text-primary hover:bg-primary/10 h-7 w-7 p-0"
                 >
-                  Cancel
+                  <Plus className="h-4 w-4" />
                 </Button>
-                <Button onClick={handleAddNote}>Save Note</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="bg-background border-border sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>New Note</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Input
+                      placeholder="Title"
+                      value={noteTitle}
+                      onChange={(e) => setNoteTitle(e.target.value)}
+                      className="bg-muted/50 border-border focus:border-primary/50 transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Textarea
+                      placeholder="Start typing..."
+                      value={noteContent}
+                      onChange={(e) => setNoteContent(e.target.value)}
+                      className="min-h-[150px] bg-muted/50 border-border focus:border-primary/50 transition-colors"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsAddDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleAddNote}>Save Note</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="flex flex-wrap justify-center gap-4">
         {displayNotes.length > 0 ? (
           displayNotes.map((note) => (
             <Card
               key={note.id}
               onClick={() => openEditDialog(note)}
               className={cn(
-                "group cursor-pointer relative overflow h-28 p-0",
+                "group cursor-pointer relative overflow h-28 p-0 w-full sm:w-[calc(50%-8px)] max-w-sm",
                 styles.card
               )}
             >
@@ -220,13 +235,13 @@ export default function QuickNotes() {
         ) : (
           <div
             className={cn(
-              "col-span-full py-8 text-center border border-dashed border-white/10",
+              "w-full col-span-full py-8 text-center border border-dashed border-primary/20",
               settings.theme.viewPreset === "minimal"
                 ? "bg-transparent rounded-2xl"
                 : "bg-white/5 rounded-3xl"
             )}
           >
-            <p className="text-white/40 text-sm">
+            <p className="text-primary/40 text-sm">
               No notes yet. Add one to get started!
             </p>
           </div>
@@ -238,7 +253,7 @@ export default function QuickNotes() {
         open={!!editingNote}
         onOpenChange={(open) => !open && setEditingNote(null)}
       >
-        <DialogContent className="bg-zinc-900 border-white/10 text-white sm:max-w-[600px] h-[80vh] flex flex-col">
+        <DialogContent className="bg-background border-border text-foreground sm:max-w-[600px] h-[80vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Edit Note</DialogTitle>
           </DialogHeader>
@@ -253,10 +268,10 @@ export default function QuickNotes() {
               placeholder="Start typing..."
               value={noteContent}
               onChange={(e) => setNoteContent(e.target.value)}
-              className="flex-1 bg-transparent border-none p-0 focus-visible:ring-0 resize-none text-white/80 leading-relaxed min-h-[300px]"
+              className="flex-1 bg-transparent border-none p-0 focus-visible:ring-0 resize-none text-foreground/80 leading-relaxed min-h-[300px]"
             />
           </div>
-          <DialogFooter className="border-t border-white/10 pt-4 gap-2">
+          <DialogFooter className="border-t border-border pt-4 gap-2">
             <Button
               variant="ghost"
               className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
@@ -275,58 +290,113 @@ export default function QuickNotes() {
 
       {/* View All Notes Dialog */}
       <Dialog open={isAllNotesOpen} onOpenChange={setIsAllNotesOpen}>
-        <DialogContent className="bg-zinc-900 border-white/10 text-white sm:max-w-[700px] max-h-[85vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>All Notes</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setIsAllNotesOpen(false);
-                  setIsAddDialogOpen(true);
-                  resetForm();
-                }}
-                className="h-8 gap-2 text-primary"
-              >
-                <Plus className="h-4 w-4" /> New Note
-              </Button>
-            </DialogTitle>
+        <DialogContent className="bg-background border-border text-foreground sm:max-w-[800px] h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
+          <DialogHeader className="p-6 pb-2 border-b border-border/50">
+            <div className="flex items-center justify-between gap-4">
+              <DialogTitle className="text-xl font-semibold">
+                All Notes
+                <span className="ml-2 text-xs font-normal text-muted-foreground">
+                  {notes.length} notes
+                </span>
+              </DialogTitle>
+            </div>
+            <div className="relative mt-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search notes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 bg-muted/50 border-border h-10 rounded-xl focus:border-primary/50 transition-colors"
+              />
+            </div>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto p-2 pr-4 space-y-3 custom-scrollbar">
-            {notes.map((note) => (
-              <div
-                key={note.id}
-                onClick={() => {
-                  setIsAllNotesOpen(false);
-                  openEditDialog(note);
-                }}
-                className="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer group"
-              >
-                <div className="flex justify-between items-start gap-4">
-                  <div className="space-y-1 overflow-hidden">
-                    <h4 className="font-medium text-white/90 truncate">
-                      {note.title}
-                    </h4>
-                    <p className="text-sm text-white/50 line-clamp-1">
-                      {note.content}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-white/20 shrink-0">
-                      {new Date(note.updatedAt).toLocaleDateString()}
-                    </span>
-                    <Trash2
-                      className="h-4 w-4 text-white/20 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteNote(note.id);
+
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+            {notes.filter(
+              (n) =>
+                n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                n.content.toLowerCase().includes(searchTerm.toLowerCase())
+            ).length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {notes
+                  .filter(
+                    (n) =>
+                      n.title
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase()) ||
+                      n.content.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((note) => (
+                    <Card
+                      key={note.id}
+                      onClick={() => {
+                        setIsAllNotesOpen(false);
+                        openEditDialog(note);
                       }}
-                    />
-                  </div>
-                </div>
+                      className="group cursor-pointer relative bg-muted/50 hover:bg-muted border-border transition-all overflow-hidden flex flex-col h-40 rounded-3xl"
+                    >
+                      <CardHeader className="p-4 pb-2 border-none">
+                        <div className="flex justify-between items-start gap-2">
+                          <CardTitle className="text-sm font-medium text-foreground/90 truncate pr-6">
+                            {note.title}
+                          </CardTitle>
+                          <Trash2
+                            className="h-4 w-4 text-muted-foreground/30 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all absolute top-4 right-4 z-10"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteNote(note.id);
+                            }}
+                          />
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0 flex-1 overflow-hidden">
+                        <p className="text-xs text-muted-foreground line-clamp-4 leading-relaxed">
+                          {note.content || "Empty note"}
+                        </p>
+                      </CardContent>
+                      <div className="p-4 pt-0 pb-3 flex items-center justify-between text-[10px] text-muted-foreground/30">
+                        <span>
+                          {new Date(note.updatedAt).toLocaleDateString()}
+                        </span>
+                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 text-primary">
+                          <span>Edit</span>
+                          <Edit2 className="h-3 w-3" />
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                <Button
+                  // size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setIsAllNotesOpen(false);
+                    setIsAddDialogOpen(true);
+                    resetForm();
+                  }}
+                  className="w-full h-full rounded-3xl"
+                >
+                  <Plus className="h-4 w-4" /> New Note
+                </Button>
               </div>
-            ))}
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center py-20">
+                <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                  <Search className="h-6 w-6 text-muted-foreground/30" />
+                </div>
+                <p className="text-muted-foreground text-sm">
+                  No notes found matching your search
+                </p>
+                {searchTerm && (
+                  <Button
+                    variant="link"
+                    className="mt-2 text-primary"
+                    onClick={() => setSearchTerm("")}
+                  >
+                    Clear search
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

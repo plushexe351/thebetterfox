@@ -79,6 +79,7 @@ export interface WidgetVisibility {
   searchBar: boolean;
   shortcuts: boolean;
   quickNotes: boolean;
+  showTitles: boolean;
 }
 
 export interface SearchSettings {
@@ -126,6 +127,7 @@ export const DEFAULT_SETTINGS: Settings = {
     searchBar: true,
     shortcuts: true,
     quickNotes: false,
+    showTitles: true,
   },
   clock: {
     showSeconds: false,

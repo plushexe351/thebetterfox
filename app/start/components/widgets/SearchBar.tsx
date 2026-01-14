@@ -156,7 +156,7 @@ const SearchBar = () => {
         : `https://${cleanQuery}`;
       window.location.href = url;
     } else {
-      const searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(
+      const searchUrl = `https://google.com/search?q=${encodeURIComponent(
         cleanQuery
       )}`;
       if (settings.search.openInNewTab) {

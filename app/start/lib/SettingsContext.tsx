@@ -14,6 +14,10 @@ interface SettingsContextType {
   updateSettings: (updates: Partial<Settings>) => void;
   resetSettings: () => void;
   isLoaded: boolean;
+  openQuickNotesManager: boolean;
+  setOpenQuickNotesManager: (open: boolean) => void;
+  openShortcutsManager: boolean;
+  setOpenShortcutsManager: (open: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(
@@ -23,6 +27,8 @@ const SettingsContext = createContext<SettingsContextType | undefined>(
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [openQuickNotesManager, setOpenQuickNotesManager] = useState(false);
+  const [openShortcutsManager, setOpenShortcutsManager] = useState(false);
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -74,6 +80,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         updateSettings,
         resetSettings,
         isLoaded,
+        openQuickNotesManager,
+        setOpenQuickNotesManager,
+        openShortcutsManager,
+        setOpenShortcutsManager,
       }}
     >
       {children}
