@@ -291,7 +291,7 @@ export default function QuickNotes() {
       {/* View All Notes Dialog */}
       <Dialog open={isAllNotesOpen} onOpenChange={setIsAllNotesOpen}>
         <DialogContent className="bg-background border-border text-foreground sm:max-w-[800px] h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
-          <DialogHeader className="p-6 pb-2 border-b border-border/50">
+          <DialogHeader className="p-6 pb-2">
             <div className="flex items-center justify-between gap-4">
               <DialogTitle className="text-xl font-semibold">
                 All Notes
@@ -306,18 +306,29 @@ export default function QuickNotes() {
                 placeholder="Search notes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 bg-muted/50 border-border h-10 rounded-xl focus:border-primary/50 transition-colors"
+                className="pl-9 bg-muted/50 rounded-full focus:border-primary/50 transition-colors"
               />
             </div>
           </DialogHeader>
-
+          <Button
+            // size="sm"
+            variant="outline"
+            onClick={() => {
+              setIsAllNotesOpen(false);
+              setIsAddDialogOpen(true);
+              resetForm();
+            }}
+            className="absolute bottom-6 right-6 z-10 flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" /> New Note
+          </Button>
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
             {notes.filter(
               (n) =>
                 n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 n.content.toLowerCase().includes(searchTerm.toLowerCase())
             ).length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-wrap justify-start gap-4">
                 {notes
                   .filter(
                     (n) =>
@@ -329,54 +340,47 @@ export default function QuickNotes() {
                   .map((note) => (
                     <Card
                       key={note.id}
-                      onClick={() => {
-                        setIsAllNotesOpen(false);
-                        openEditDialog(note);
-                      }}
-                      className="group cursor-pointer relative bg-muted/50 hover:bg-muted border-border transition-all overflow-hidden flex flex-col h-40 rounded-3xl"
+                      onClick={() => openEditDialog(note)}
+                      className={cn(
+                        "group cursor-pointer relative overflow h-28 p-0 w-full sm:w-[calc(50%-8px)] max-w-sm",
+                        styles.card
+                      )}
                     >
-                      <CardHeader className="p-4 pb-2 border-none">
-                        <div className="flex justify-between items-start gap-2">
-                          <CardTitle className="text-sm font-medium text-foreground/90 truncate pr-6">
+                      <CardContent className={cn("", styles.content)}>
+                        <div className="space-y-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                          <h4
+                            className={cn(
+                              "font-medium truncate pr-6 transition-colors"
+                            )}
+                          >
                             {note.title}
-                          </CardTitle>
-                          <Trash2
-                            className="h-4 w-4 text-muted-foreground/30 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all absolute top-4 right-4 z-10"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteNote(note.id);
-                            }}
-                          />
+                          </h4>
+                          <p
+                            className={cn(
+                              "text-xs leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap"
+                            )}
+                          >
+                            {note.content || "Empty note"}
+                          </p>
                         </div>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0 flex-1 overflow-hidden">
-                        <p className="text-xs text-muted-foreground line-clamp-4 leading-relaxed">
-                          {note.content || "Empty note"}
-                        </p>
+                        <div
+                          className={cn(
+                            "flex items-center justify-between text-[10px]"
+                          )}
+                        >
+                          <span>
+                            {new Date(note.updatedAt).toLocaleDateString()}
+                          </span>
+                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Trash2
+                              className="h-4 w-4 hover:text-red-400"
+                              onClick={(e) => handleDeleteNote(note.id, e)}
+                            />
+                          </div>
+                        </div>
                       </CardContent>
-                      <div className="p-4 pt-0 pb-3 flex items-center justify-between text-[10px] text-muted-foreground/30">
-                        <span>
-                          {new Date(note.updatedAt).toLocaleDateString()}
-                        </span>
-                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 text-primary">
-                          <span>Edit</span>
-                          <Edit2 className="h-3 w-3" />
-                        </div>
-                      </div>
                     </Card>
                   ))}
-                <Button
-                  // size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setIsAllNotesOpen(false);
-                    setIsAddDialogOpen(true);
-                    resetForm();
-                  }}
-                  className="w-full h-full rounded-3xl"
-                >
-                  <Plus className="h-4 w-4" /> New Note
-                </Button>
               </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center py-20">

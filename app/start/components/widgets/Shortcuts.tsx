@@ -447,7 +447,16 @@ const Shortcuts = () => {
               />
             </div>
           </DialogHeader>
-
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIsAllShortcutsOpen(false);
+              handleOpenDialog();
+            }}
+            className="absolute bottom-6 right-6 z-10 flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" /> New Shortcut
+          </Button>
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
             {shortcuts.filter(
               (s) =>
@@ -496,16 +505,6 @@ const Shortcuts = () => {
                       </div>
                     </Card>
                   ))}
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setIsAllShortcutsOpen(false);
-                    handleOpenDialog();
-                  }}
-                  className="w-full h-full rounded-3xl"
-                >
-                  <Plus className="h-4 w-4" /> New Shortcut
-                </Button>
               </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center py-20">
