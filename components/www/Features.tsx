@@ -118,7 +118,6 @@ const Features = () => {
           ))}
         </div>
       </div>
-      ;
     </>
   );
 };
