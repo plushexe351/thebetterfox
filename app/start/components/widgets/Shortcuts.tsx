@@ -32,6 +32,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 interface Shortcut {
   id: string;
@@ -293,7 +295,7 @@ const Shortcuts = () => {
                   <Button
                     variant="ghost"
                     size="icon-xs"
-                    className="h-6 w-6 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground rounded-full transition-colors"
+                    className="h-6 w-6 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground rounded-full transition-colors  hover:text-red-400 cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
                       handleDelete(shortcut.id);
@@ -306,7 +308,7 @@ const Shortcuts = () => {
                       <Button
                         variant="ghost"
                         size="icon-xs"
-                        className="h-6 w-6 bg-background/80 backdrop-blur-sm hover:bg-background rounded-full transition-colors"
+                        className="h-6 w-6 bg-background/80 backdrop-blur-sm hover:bg-background rounded-full transition-colors cursor-pointer"
                         onClick={(e) => e.preventDefault()}
                       >
                         <MoreVertical className="h-3 w-3" />
@@ -390,6 +392,16 @@ const Shortcuts = () => {
               </div>
             </div>
             <DialogFooter className="pt-4 border-t border-border">
+              {editingId && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-destructive mr-auto"
+                  onClick={() => handleDelete(editingId!)}
+                >
+                  Delete
+                </Button>
+              )}
               <Button type="button" variant="ghost" onClick={handleCloseDialog}>
                 Cancel
               </Button>
@@ -427,8 +439,8 @@ const Shortcuts = () => {
 
       {/* View All Shortcuts Dialog */}
       <Dialog open={isAllShortcutsOpen} onOpenChange={setIsAllShortcutsOpen}>
-        <DialogContent className="bg-background border-border text-foreground sm:max-w-[800px] h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
-          <DialogHeader className="p-6 pb-2 border-b border-border/50">
+        <DialogContent className="bg-background border-border text-foreground w-[600px] sm:max-w-[800px] h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
+          <DialogHeader className="p-6 pb-2">
             <div className="flex items-center justify-between gap-4">
               <DialogTitle className="text-xl font-semibold">
                 All Shortcuts
@@ -443,7 +455,7 @@ const Shortcuts = () => {
                 placeholder="Search shortcuts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 bg-muted/50 border-border h-10 rounded-xl focus:border-primary/50 transition-colors"
+                className="pl-9 bg-muted/50 border-border rounded-full focus:border-primary/50 transition-colors"
               />
             </div>
           </DialogHeader>
@@ -463,7 +475,7 @@ const Shortcuts = () => {
                 s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 s.url.toLowerCase().includes(searchTerm.toLowerCase())
             ).length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-wrap gap-4 justify-start">
                 {shortcuts
                   .filter(
                     (s) =>
@@ -473,36 +485,45 @@ const Shortcuts = () => {
                   .map((shortcut) => (
                     <Card
                       key={shortcut.id}
-                      className="group relative bg-muted/50 hover:bg-muted border-border transition-all rounded-3xl overflow-hidden flex flex-col items-center justify-center p-4 h-32 cursor-pointer"
+                      className={cn(
+                        "hover:bg-muted transition-all rounded-3xl overflow-hidden p-4 h-32 cursor-pointer sm:w-[calc(50%-8px)] max-w-sm min-w-[calc(50%-8px)] group relative",
+                        styles.card
+                      )}
                       onClick={() => {
                         setIsAllShortcutsOpen(false);
                         handleOpenDialog(shortcut);
                       }}
                     >
-                      <Image
-                        src={getFaviconUrl(shortcut.url)}
-                        alt={shortcut.name}
-                        width={32}
-                        height={32}
-                        className="object-contain p-1 rounded-lg bg-background/50 mb-2"
-                        unoptimized
-                      />
-                      <p className="text-xs font-medium text-foreground/90 text-center line-clamp-2 w-full">
-                        {shortcut.name}
-                      </p>
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 rounded-full hover:bg-destructive hover:text-destructive-foreground"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(shortcut.id);
-                          }}
+                      <CardContent className="flex flex-col items-center justify-center h-full">
+                        <Image
+                          src={getFaviconUrl(shortcut.url)}
+                          alt={shortcut.name}
+                          width={32}
+                          height={32}
+                          className={`${styles.img} object-contain p-1`}
+                          unoptimized
+                        />
+                        <p
+                          className={cn(
+                            "text-xs font-medium text-foreground/90 text-center line-clamp-2 w-full",
+                            styles.text
+                          )}
+                          title={shortcut.name}
                         >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
+                          {shortcut.name}
+                        </p>
+                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all flex gap-1">
+                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Trash2
+                              className="h-4 w-4 hover:text-red-400"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(shortcut.id);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
                     </Card>
                   ))}
               </div>
