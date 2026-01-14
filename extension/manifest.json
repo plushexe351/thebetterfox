@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Better Start",
+  "name": "thebetterfox",
   "version": "0.1.0",
   "chrome_url_overrides": {
     "newtab": "index.html"
@@ -10,10 +10,11 @@
   ],
   
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ],
  "background": {
-  "service_worker":"background.js"
+  "scripts":["background.js"]
 },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://suggestqueries.google.com"
