@@ -12,34 +12,69 @@ Future plans may include shipping the start page directly inside the extension f
 
 Whether thebetterfox continues as an actively maintained project depends on interest from early users and contributions from developers during the testing phase. If the experiment proves useful, there is intent to support it; if not, it may remain a niche personal tool.
 
-# How to create extension?
+# How to setup extension dir ? (painful as f\*\*\*, took quite a stroll on me to hack this up for Next.js)
 
-"build:extension": "next build && next export && node fix-inline-script.js && mkdir -p extension/\next && cp -r out/start/_ extension/ && mv extension/index.html extension/start.html && cp -r out/\next/_ extension/\next/ && cp out/favicon.ico extension/ && cp -r public/assets extension/assets"
+Create `/extensions/background.js`
+
+```js
+/**
+ * Background script for search suggestions.
+ */
+
+browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "fetchSuggestions") {
+    fetch(
+      `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(
+        msg.query
+      )}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        sendResponse(data[1] || []);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        sendResponse([]);
+      });
+    return true;
+  }
+});
+```
 
 Run
 
-```
+```bash
 npm run build:extension
+```
+
+```json
+"build:extension": "next build && next export && node fix-inline-script.js && mkdir -p extension/\next && cp -r out/start/_ extension/ && mv extension/index.html extension/start.html && cp -r out/\next/_ extension/\next/ && cp out/favicon.ico extension/ && cp -r public/assets extension/assets"
 ```
 
 then, run :
 
-```
+```bash
 node scripts/fix-inline-script.js
 ```
 
 and then,
 
-```
+`mkdir extension`
+
+followed by
+
+```bash
 cp -r out/start/* extension/
-cp -r out/_next extension/_next
+cp -r out/next extension/next
 cp out/favicon.ico extension/
 cp -r public/assets extension/assets
 ```
 
 finally, run:
 
+```bash
+find extension -depth -name '*next*' -exec bash -c 'mv "$1" "${1//next/next}"' _ {} \;
+grep -rl "next" extension | xargs sed -i '' 's/next/next/g'
 ```
-find extension -depth -name '*_next*' -exec bash -c 'mv "$1" "${1//_next/next}"' _ {} \;
-grep -rl "_next" extension | xargs sed -i '' 's/_next/next/g'
-```
+
+Rename `manifest.<browser>.json` to `manifest.json` before adding the extension, and you're good to go.
