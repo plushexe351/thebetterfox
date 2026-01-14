@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: process.env.NODE_ENV === "production" ? "export" : undefined,
+  // output: "export", // Uncomment this line to enable static export 
   trailingSlash: true,
   images: {
     unoptimized: true,

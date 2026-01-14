@@ -14,7 +14,11 @@ Whether thebetterfox continues as an actively maintained project depends on inte
 
 # How to setup extension dir ? (painful as f\*\*\*, took quite a stroll on me to hack this up for Next.js)
 
-Create `/extensions/background.js`
+Enable `output: "export"` in `next.config.ts`
+
+Create dir for extension: `mkdir extension`
+
+Create `/extension/background.js`
 
 ```js
 /**
@@ -96,9 +100,6 @@ then, run :
 node scripts/fix-inline-script.js
 ```
 
-and then,
-
-`mkdir extension`
 
 followed by
 
