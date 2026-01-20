@@ -9,16 +9,12 @@ import {
   Moon,
   Sun,
   Info,
-  Trash2,
-  RefreshCw,
   NotebookPen,
   Link,
   ChevronRight,
-  Github,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
