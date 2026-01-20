@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# About thebetterfox extension
 
-## Getting Started
+This browser extension exists to allow thebetterfox's start page to appear when a new tab is opened. Modern browsers do not provide a direct user setting for changing the default new tab URL, so an extension is required for this behavior.
 
-First, run the development server:
+Future plans may include shipping the start page directly inside the extension for better load performance, offline support, and reduced reliance on remote infrastructure. That decision depends on the direction the project takes and feedback from testers.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Whether thebetterfox continues as an actively maintained project depends on interest from early users and contributions from developers during the testing phase. If the experiment proves useful, there is intent to support it; if not, it may remain a niche personal tool.
+
+# How to setup extension dir ? (painful as hell, took quite a stroll on me to hack this up for Next.js)
+
+Enable `output: "export"` in `next.config.ts`
+
+Create dir for extension: `mkdir extension`
+
+Create `/extension/background.js`
+
+```js
+/**
+ * Background script for search suggestions and default home/newpage tabs.
+ */
+// Replace about:newtab or about:home with your newtab page
+const NEW_TAB_URL = browser.runtime.getURL("index.html");
+
+browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (
+    changeInfo.status === "loading" &&
+    tab.url &&
+    (tab.url.startsWith("about:newtab") || tab.url.startsWith("about:home"))
+  ) {
+    browser.tabs.update(tabId, { url: NEW_TAB_URL });
+  }
+});
+
+// Optional: Handle browser startup by targeting the first active tab
+browser.tabs.onActivated.addListener((activeInfo) => {
+  browser.tabs.get(activeInfo.tabId).then((tab) => {
+    if (
+      tab.url &&
+      (tab.url.startsWith("about:newtab") || tab.url.startsWith("about:home"))
+    ) {
+      browser.tabs.update(tab.id, { url: NEW_TAB_URL });
+    }
+  });
+});
+
+// Ensure it works on extension load/reload
+browser.runtime.onStartup.addListener(() => {
+  browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+    if (
+      tabs[0] &&
+      tabs[0].url &&
+      (tabs[0].url.startsWith("about:newtab") ||
+        tabs[0].url.startsWith("about:home"))
+    ) {
+      browser.tabs.update(tabs[0].id, { url: NEW_TAB_URL });
+    }
+  });
+});
+
+browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "fetchSuggestions") {
+    fetch(
+      `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(
+        msg.query
+      )}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        sendResponse(data[1] || []);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        sendResponse([]);
+      });
+    return true;
+  }
+});
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build:extension
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```json
+"build:extension": "mv app/api ./api-backup && (next build || (mv ./api-backup app/api && exit 1)) && mv ./api-backup app/api && next export"
+```
 
-## Learn More
+then, run :
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+node scripts/fix-inline-script.js
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+followed by
 
-## Deploy on Vercel
+```bash
+cp -r out/start/* extension/
+cp -r out/_next extension/_next
+cp out/favicon.ico extension/
+cp -r public/assets extension/assets
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+finally, run:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash 
+find extension -depth -name '*_next*' -exec bash -c 'mv "$1" "${1//_next/next}"' _ {} \;
+# (x2 - yes, you need to run this twice)
+``` 
+```bash
+grep -rl "_next" extension | xargs sed -i '' 's/_next/next/g'
+```
+
+Finally,
+Rename `manifest.<browser>.json` to `manifest.json` before adding the extension, and you're good to go.
