@@ -14,6 +14,7 @@ import {
   NotebookPen,
   Link,
   ChevronRight,
+  Github,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
@@ -116,7 +117,7 @@ export default function SettingsContent({
 
   const handleWidgetVisibilityChange = (
     widget: keyof typeof settings.widgetVisibility,
-    value: boolean
+    value: boolean,
   ) => {
     updateSettings({
       widgetVisibility: {
@@ -135,7 +136,7 @@ export default function SettingsContent({
       | DateFormat
       | number
       | string
-      | undefined
+      | undefined,
   ) => {
     updateSettings({
       clock: {
@@ -167,7 +168,7 @@ export default function SettingsContent({
 
   const handleThemeSettingsChange = (
     key: keyof typeof settings.theme,
-    value: string
+    value: string,
   ) => {
     updateSettings({
       theme: {
@@ -179,7 +180,7 @@ export default function SettingsContent({
 
   const handleShortcutsSettingsChange = (
     key: keyof typeof settings.shortcuts,
-    value: string
+    value: string,
   ) => {
     updateSettings({
       shortcuts: {
@@ -191,7 +192,7 @@ export default function SettingsContent({
 
   const handleSearchSettingsChange = (
     key: keyof typeof settings.search,
-    value: boolean
+    value: boolean,
   ) => {
     updateSettings({
       search: {
@@ -486,7 +487,7 @@ export default function SettingsContent({
                           className={cn(
                             "h-16 relative overflow-hidden group border-white/5",
                             settings.background.imageUrl === preset.url &&
-                              "ring-2 ring-primary"
+                              "ring-2 ring-primary",
                           )}
                           onClick={() =>
                             updateSettings({
@@ -579,7 +580,7 @@ export default function SettingsContent({
                             className={cn(
                               "h-16 relative overflow-hidden group border-white/5",
                               settings.background.videoUrl === preset.url &&
-                                "ring-2 ring-primary"
+                                "ring-2 ring-primary",
                             )}
                             onClick={() =>
                               updateSettings({
@@ -938,7 +939,7 @@ export default function SettingsContent({
                     onChange={(e) =>
                       handleClockSettingsChange(
                         "dateFontSize",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
@@ -982,7 +983,7 @@ export default function SettingsContent({
                     onChange={(e) =>
                       handleClockSettingsChange(
                         "fontSize",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
@@ -1006,7 +1007,7 @@ export default function SettingsContent({
                     onChange={(e) =>
                       handleClockSettingsChange(
                         "fontWeight",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
@@ -1028,6 +1029,30 @@ export default function SettingsContent({
           Reset All Settings
         </Button>
       </div>
+
+      {/* Footer */}
+      <div className="space-y-4">
+        <p className="text-sm text-muted-foreground mx-5.5 text-center">
+          Made in India
+          <br />
+          by{" "}
+          <a
+            href="https://ushnish-tapaswi.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Ushnish Tapaswi
+          </a>
+          <br />
+        </p>
+      </div>
+      <Separator />
+      {new Date().getFullYear() > 2023 && (
+        <p className="text-xs text-muted-foreground text-center mb-5">
+          {new Date().getFullYear()} TheBetterFox.
+        </p>
+      )}
     </div>
   );
 }

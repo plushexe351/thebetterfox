@@ -66,7 +66,7 @@ export default function QuickNotes() {
             content: noteContent,
             updatedAt: Date.now(),
           }
-        : n
+        : n,
     );
     updateSettings({ notes: updatedNotes });
     resetForm();
@@ -122,7 +122,7 @@ export default function QuickNotes() {
   return (
     <div className="w-full max-w-[700px] space-y-4">
       {settings.widgetVisibility.showTitles && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between rounded-lg px-3 py-2">
           <h3 className="text-sm font-medium text-primary uppercase tracking-wider">
             Quickies
           </h3>
@@ -137,56 +137,51 @@ export default function QuickNotes() {
                 Manage Quickies ({notes.length})
               </Button>
             )}
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    resetForm();
-                    setIsAddDialogOpen(true);
-                  }}
-                  className="text-primary hover:bg-primary/10 h-7 w-7 p-0"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-background border-border sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>New Note</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Input
-                      placeholder="Title"
-                      value={noteTitle}
-                      onChange={(e) => setNoteTitle(e.target.value)}
-                      className="bg-muted/50 border-border focus:border-primary/50 transition-colors"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Textarea
-                      placeholder="Start typing..."
-                      value={noteContent}
-                      onChange={(e) => setNoteContent(e.target.value)}
-                      className="min-h-[150px] bg-muted/50 border-border focus:border-primary/50 transition-colors"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setIsAddDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddNote}>Save Note</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                resetForm();
+                setIsAddDialogOpen(true);
+              }}
+              className="text-primary hover:bg-primary/10 h-7 w-7 p-0"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       )}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="bg-background border-border sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>New Note</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Input
+                placeholder="Title"
+                value={noteTitle}
+                onChange={(e) => setNoteTitle(e.target.value)}
+                className="bg-muted/50 border-border focus:border-primary/50 transition-colors"
+              />
+            </div>
+            <div className="space-y-2">
+              <Textarea
+                placeholder="Start typing..."
+                value={noteContent}
+                onChange={(e) => setNoteContent(e.target.value)}
+                className="min-h-[150px] bg-muted/50 border-border focus:border-primary/50 transition-colors"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsAddDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddNote}>Save Note</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-wrap justify-center gap-4">
         {displayNotes.length > 0 ? (
@@ -196,21 +191,21 @@ export default function QuickNotes() {
               onClick={() => openEditDialog(note)}
               className={cn(
                 "group cursor-pointer relative overflow h-28 p-0 w-full sm:w-[calc(50%-8px)] max-w-sm",
-                styles.card
+                styles.card,
               )}
             >
               <CardContent className={cn("", styles.content)}>
                 <div className="space-y-1 overflow-hidden text-ellipsis whitespace-nowrap">
                   <h4
                     className={cn(
-                      "font-medium truncate pr-6 transition-colors"
+                      "font-medium truncate pr-6 transition-colors",
                     )}
                   >
                     {note.title}
                   </h4>
                   <p
                     className={cn(
-                      "text-xs leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap"
+                      "text-xs leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap",
                     )}
                   >
                     {note.content || "Empty note"}
@@ -218,7 +213,7 @@ export default function QuickNotes() {
                 </div>
                 <div
                   className={cn(
-                    "flex items-center justify-between text-[10px]"
+                    "flex items-center justify-between text-[10px]",
                   )}
                 >
                   <span>{new Date(note.updatedAt).toLocaleDateString()}</span>
@@ -235,13 +230,14 @@ export default function QuickNotes() {
         ) : (
           <div
             className={cn(
-              "w-full col-span-full py-8 text-center border border-dashed border-primary/20",
+              "w-full col-span-full py-8 text-center border border-dashed border-primary/20 backdrop-blur-md cursor-pointer hover:bg-accent/50 transition-colors flex items-center justify-center h-28",
               settings.theme.viewPreset === "minimal"
                 ? "bg-transparent rounded-2xl"
-                : "bg-white/5 rounded-3xl"
+                : "bg-white/5 rounded-3xl",
             )}
+            onClick={() => setIsAddDialogOpen(true)}
           >
-            <p className="text-primary/40 text-sm">
+            <p className="text-primary/60 text-sm">
               No notes yet. Add one to get started!
             </p>
           </div>
@@ -326,7 +322,7 @@ export default function QuickNotes() {
             {notes.filter(
               (n) =>
                 n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                n.content.toLowerCase().includes(searchTerm.toLowerCase())
+                n.content.toLowerCase().includes(searchTerm.toLowerCase()),
             ).length > 0 ? (
               <div className="flex flex-wrap justify-start gap-4">
                 {notes
@@ -335,7 +331,9 @@ export default function QuickNotes() {
                       n.title
                         .toLowerCase()
                         .includes(searchTerm.toLowerCase()) ||
-                      n.content.toLowerCase().includes(searchTerm.toLowerCase())
+                      n.content
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase()),
                   )
                   .map((note) => (
                     <Card
@@ -343,21 +341,21 @@ export default function QuickNotes() {
                       onClick={() => openEditDialog(note)}
                       className={cn(
                         "group cursor-pointer relative overflow h-28 p-0 w-full sm:w-[calc(50%-8px)] max-w-sm",
-                        styles.card
+                        styles.card,
                       )}
                     >
                       <CardContent className={cn("", styles.content)}>
                         <div className="space-y-1 overflow-hidden text-ellipsis whitespace-nowrap">
                           <h4
                             className={cn(
-                              "font-medium truncate pr-6 transition-colors"
+                              "font-medium truncate pr-6 transition-colors",
                             )}
                           >
                             {note.title}
                           </h4>
                           <p
                             className={cn(
-                              "text-xs leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap"
+                              "text-xs leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap",
                             )}
                           >
                             {note.content || "Empty note"}
@@ -365,7 +363,7 @@ export default function QuickNotes() {
                         </div>
                         <div
                           className={cn(
-                            "flex items-center justify-between text-[10px]"
+                            "flex items-center justify-between text-[10px]",
                           )}
                         >
                           <span>
